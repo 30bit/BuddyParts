@@ -1,0 +1,106 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://jumper/sounds/jump.wav" type="AudioStream" id=1]
+[ext_resource path="res://jumper/anim.gd" type="Script" id=2]
+[ext_resource path="res://jumper/octop.png" type="Texture" id=3]
+[ext_resource path="res://jumper/jumper.gd" type="Script" id=4]
+[ext_resource path="res://jumper/sounds/land.wav" type="AudioStream" id=5]
+[ext_resource path="res://jumper/sounds/bounce.wav" type="AudioStream" id=6]
+
+[sub_resource type="Curve" id=1]
+max_value = 524.0
+_data = [ Vector2( 0, 297.405 ), 0.0, 79.4748, 0, 0, Vector2( 0.268344, 342.252 ), 271.299, 305.798, 0, 0, Vector2( 0.997904, 460.27 ), 96.851, 0.0, 0, 0 ]
+
+[sub_resource type="Curve" id=2]
+_data = [ Vector2( 0, 0.479594 ), 0.0, -2.50676, 0, 0, Vector2( 1, 0.875991 ), 0.396396, 0.0, 1, 0 ]
+
+[sub_resource type="Curve" id=3]
+max_value = 1024.0
+_data = [ Vector2( 0, 596.988 ), 0.0, 375.647, 0, 0, Vector2( 0.287212, 922.257 ), 0.0, 310.619, 0, 0, Vector2( 1, 1024 ), -56.2355, 0.0, 0, 0 ]
+
+[sub_resource type="Curve" id=4]
+max_value = 0.1
+_data = [ Vector2( 0, 0.0256757 ), 0.0, 0.0818356, 0, 1, Vector2( 0.849057, 0.0951588 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.074438 ), -0.368798, 0.0, 0, 0 ]
+
+[sub_resource type="Curve" id=5]
+max_value = 175.39
+_data = [ Vector2( 0, 65.5737 ), 0.0, -88.8163, 0, 0, Vector2( 0.245283, 18.0052 ), 0.0, 0.0, 0, 0, Vector2( 0.704403, 60.0434 ), 198.343, 198.343, 0, 0, Vector2( 0.943396, 100.847 ), 0.0, 0.0, 0, 0, Vector2( 1, 91.6452 ), 3.88507, 0.0, 0, 0 ]
+
+[sub_resource type="CapsuleShape2D" id=6]
+radius = 18.9734
+height = 17.8736
+
+[sub_resource type="Animation" id=7]
+resource_name = "Walk"
+loop = true
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 0, 1 ]
+}
+
+[node name="Jumper" type="KinematicBody2D"]
+position = Vector2( -0.614957, 4.89171 )
+script = ExtResource( 4 )
+vertical_rush = 1.2
+horizontal_rush = 0.5
+vertical_bounce = 0.119
+horizontal_bounce = 0.692
+move_speed = SubResource( 1 )
+move_period = 0.462
+floor_friction = SubResource( 2 )
+floor_period = 0.427
+jump_speed = SubResource( 3 )
+jump_period = 0.3
+air_resistance = SubResource( 4 )
+air_period = 1.005
+gravity = SubResource( 5 )
+gravity_period = 0.193
+
+[node name="Octo" type="Sprite" parent="."]
+position = Vector2( -0.614853, 2.82832 )
+rotation = 1.86265e-09
+texture = ExtResource( 3 )
+vframes = 2
+
+[node name="Body" type="CollisionShape2D" parent="."]
+shape = SubResource( 6 )
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Octo")
+anims/Walk = SubResource( 7 )
+script = ExtResource( 2 )
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="Jump" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 1 )
+volume_db = 23.588
+pitch_scale = 1.92
+
+[node name="Land" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 5 )
+volume_db = 24.0
+pitch_scale = 1.92
+
+[node name="Bounce" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 6 )
+volume_db = 24.0
+pitch_scale = 1.92
+
+[connection signal="begin_brake" from="." to="Anim" method="_on_begin_brake"]
+[connection signal="begin_fly" from="." to="Anim" method="_on_begin_fly"]
+[connection signal="begin_move" from="." to="Anim" method="_on_begin_move"]
+[connection signal="bounce" from="." to="Anim" method="_on_bounce"]
+[connection signal="flip_left" from="." to="Anim" method="_on_flip_left"]
+[connection signal="flip_right" from="." to="Anim" method="_on_flip_right"]
+[connection signal="jump" from="." to="Anim" method="_on_jump"]
+[connection signal="land" from="." to="Anim" method="_on_land"]
