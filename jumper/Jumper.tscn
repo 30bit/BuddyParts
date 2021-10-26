@@ -1,11 +1,13 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://jumper/sounds/jump.wav" type="AudioStream" id=1]
 [ext_resource path="res://jumper/anim.gd" type="Script" id=2]
-[ext_resource path="res://jumper/octop.png" type="Texture" id=3]
+[ext_resource path="res://jumper/octo.png" type="Texture" id=3]
 [ext_resource path="res://jumper/jumper.gd" type="Script" id=4]
 [ext_resource path="res://jumper/sounds/land.wav" type="AudioStream" id=5]
 [ext_resource path="res://jumper/sounds/bounce.wav" type="AudioStream" id=6]
+[ext_resource path="res://jumper/anims/walk.tres" type="Animation" id=7]
+[ext_resource path="res://jumper/anims/idle.tres" type="Animation" id=8]
 
 [sub_resource type="Curve" id=1]
 max_value = 524.0
@@ -31,20 +33,20 @@ radius = 18.9734
 height = 17.8736
 
 [sub_resource type="Animation" id=7]
-resource_name = "Walk"
+resource_name = "Fly"
+length = 0.4
 loop = true
-step = 0.05
 tracks/0/type = "value"
-tracks/0/path = NodePath(".:frame")
+tracks/0/path = NodePath(".:frame_coords")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.5 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ 0, 1 ]
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 2, 0 ), Vector2( 2, 1 ), Vector2( 2, 2 ), Vector2( 2, 3 ) ]
 }
 
 [node name="Jumper" type="KinematicBody2D"]
@@ -69,14 +71,18 @@ gravity_period = 0.193
 position = Vector2( -0.614853, 2.82832 )
 rotation = 1.86265e-09
 texture = ExtResource( 3 )
-vframes = 2
+hframes = 3
+vframes = 10
+frame = 5
 
 [node name="Body" type="CollisionShape2D" parent="."]
 shape = SubResource( 6 )
 
 [node name="Anim" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Octo")
-anims/Walk = SubResource( 7 )
+anims/Fly = SubResource( 7 )
+anims/Idle = ExtResource( 8 )
+anims/Walk = ExtResource( 7 )
 script = ExtResource( 2 )
 
 [node name="Sounds" type="Node" parent="."]

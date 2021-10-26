@@ -70,7 +70,6 @@ func move_and_jump(delta: float, horizontal_input: int, vertical_input: int):
 		if _airborne:
 			_airborne = false
 			emit_signal("land")
-		_airborne = false
 		match horizontal_input:
 			HorizontalInput.RIGHT:
 				if _t_brake != 0:

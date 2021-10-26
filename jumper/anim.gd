@@ -11,10 +11,10 @@ func _on_jump():
 		_jump_sound.play()
 
 func _on_begin_brake():
-	stop()
+	play("Idle")
 
 func _on_begin_fly():
-	stop()
+	play("Fly")
 
 func _on_bounce():
 	if not _bounce_sound.playing and not _land_sound.playing:
@@ -30,5 +30,6 @@ func _on_flip_right():
 	_sprite.flip_h = false
 
 func _on_land():
+	play("Idle")
 	if not _bounce_sound.playing and not _land_sound.playing and not _jump_sound.playing:
 		_land_sound.play()
