@@ -63,6 +63,8 @@ func unfreeze():
 		forget_state()
 
 func move_and_jump(delta: float, horizontal_input: int, vertical_input: int):
+	scale = Vector2.ONE
+	rotation = 0
 	if _frozen:
 		return
 	_gravitate(delta)
@@ -70,25 +72,7 @@ func move_and_jump(delta: float, horizontal_input: int, vertical_input: int):
 		if _airborne:
 			_airborne = false
 			emit_signal("land")
-		match horizontal_input:
-			HorizontalInput.RIGHT:
-				if _t_brake != 0:
-					emit_signal("begin_move")
-					_t_brake = 0
-				if face_right(delta) == _Face.FLIP:
-					emit_signal("flip_right")
-			HorizontalInput.LEFT:
-				if _t_brake != 0:
-					emit_signal("begin_move")
-					_t_brake = 0
-				if face_left(delta) != _Face.FLIP:
-					emit_signal("flip_left")
-			HorizontalInput.NONE:
-				if _t_brake == 0:
-					emit_signal("begin_brake")
-					_t_move = 0
-					_t_charge = 0
-				_brake(delta)
+		_input_horizontal(delta, horizontal_input)
 		
 		if vertical_input == VerticalInput.CHARGE:
 			_charge(delta)
@@ -112,6 +96,27 @@ func move_and_jump(delta: float, horizontal_input: int, vertical_input: int):
 			velocity.y *= vertical_bounce
 			emit_signal("bounce")
 	velocity = move_and_slide(velocity, Vector2.UP)
+
+func _input_horizontal(delta: float, horizontal_input: int):
+	match horizontal_input:
+				HorizontalInput.RIGHT:
+					if _t_brake != 0:
+						emit_signal("begin_move")
+						_t_brake = 0
+					if face_right(delta) == _Face.FLIP:
+						emit_signal("flip_right")
+				HorizontalInput.LEFT:
+					if _t_brake != 0:
+						emit_signal("begin_move")
+						_t_brake = 0
+					if face_left(delta) != _Face.FLIP:
+						emit_signal("flip_left")
+				HorizontalInput.NONE:
+					if _t_brake == 0:
+						emit_signal("begin_brake")
+						_t_move = 0
+						_t_charge = 0
+					_brake(delta)
 
 func forget_state():
 	_t_gravity = 0
