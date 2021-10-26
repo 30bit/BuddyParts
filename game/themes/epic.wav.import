@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/epic.wav-6ea2eb1aaa13117e05a7a8916c355ac3.sample"
+
+[deps]
+
+source_file="res://game/themes/epic.wav"
+dest_files=[ "res://.import/epic.wav-6ea2eb1aaa13117e05a7a8916c355ac3.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=true
+compress/mode=0

@@ -1,8 +1,8 @@
 class_name Detector
 extends Node2D
 
-const ENTRY_RADIUS: int = 25
-const DETECTION_RADIUS: float = 1.0
+const ENTRY_RADIUS: int = 20
+const DETECTION_RADIUS: float = 20.0
 
 signal capture(captive)
 
@@ -16,6 +16,7 @@ func enable(value: bool):
 
 func _new_raycast(y: float) -> RayCast2D:
 	var raycast := RayCast2D.new()
+	raycast.collision_mask = 0b10000_00000_10000_00000
 	raycast.cast_to = Vector2.RIGHT * DETECTION_RADIUS * 2
 	raycast.position = Vector2(-DETECTION_RADIUS, y)
 	return raycast

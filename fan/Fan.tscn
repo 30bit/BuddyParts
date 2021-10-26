@@ -1,0 +1,62 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://fan/broken_fan.png" type="Texture" id=1]
+[ext_resource path="res://fan/kill.wav" type="AudioStream" id=2]
+[ext_resource path="res://fan/blood.png" type="Texture" id=3]
+
+[sub_resource type="Animation" id=1]
+resource_name = "Idle"
+length = 2.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 0, 1 ]
+}
+
+[sub_resource type="CapsuleShape2D" id=2]
+radius = 12.0215
+height = 20.0201
+
+[node name="Fan" type="StaticBody2D"]
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+anims/Idle = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+vframes = 2
+frame = 1
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+position = Vector2( 0.206757, -5.57705 )
+scale = Vector2( 8, 1 )
+shape = SubResource( 2 )
+
+[node name="Sound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 2 )
+volume_db = 24.0
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+z_index = 5
+amount = 150
+lifetime = 1.6
+speed_scale = 1.69
+randomness = 0.55
+lifetime_randomness = 0.32
+texture = ExtResource( 3 )
+emission_shape = 2
+emission_rect_extents = Vector2( 10, 1 )
+spread = 0.0
+gravity = Vector2( 0, 100 )
+linear_accel = 15.0
+radial_accel = 75.11
+radial_accel_random = 1.0
+damping = 26.88

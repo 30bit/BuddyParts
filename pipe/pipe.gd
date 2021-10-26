@@ -1,8 +1,8 @@
 class_name Pipe
 extends Path2D
 
-const JOURNEY_SPEED: float = 10000.0
-const SPIT_SPEED: float = 1000.0
+const JOURNEY_SPEED: float = 4000.0
+const SPIT_SPEED: float = 2150.0
 const FORGET_DELAY: float = 1.5
 
 export (bool) var is_start_an_entry = true
@@ -12,6 +12,10 @@ var _start: Detector
 var _end: Detector
 var _travelers: Dictionary
 var _mem: Array
+
+signal release(captive)
+signal capture(captive)
+
 
 enum _Travel { START_TO_END, END_TO_START }
 
@@ -30,9 +34,9 @@ func _ready():
 	var pre_last := curve.interpolate(index_pre_last, 0)
 	var last := curve.interpolate(index_pre_last, 1)
 	_start = _new_detector(first, second - first)
-	_start.connect("capture", self, "_capture_with_start")
+	assert(_start.connect("capture", self, "_capture_with_start") == OK)
 	_end = _new_detector(last, pre_last - last)
-	_end.connect("capture", self, "_capture_with_end")
+	assert(_end.connect("capture", self, "_capture_with_end") == OK)
 
 func _update_entries():
 	_start.enable(is_start_an_entry)
@@ -54,8 +58,10 @@ func _get_end_exit_normal() -> Vector2:
 func _release(captive: PathFollow2D):
 	var t: RemoteTransform2D = captive.get_child(0)
 	var jumper: Jumper = get_node(t.remote_path)
-	jumper.collision_layer = 1
-	jumper.unfreeze()
+	jumper.collision_layer = 512
+	jumper.scale = Vector2.ONE
+	jumper.rotation = 0
+	jumper.unfreeze_kinematics()
 	if _travelers[jumper] == _Travel.END_TO_START:
 		jumper.velocity = SPIT_SPEED * _get_start_exit_normal()
 	else:
@@ -68,6 +74,7 @@ func _release(captive: PathFollow2D):
 	forget.start(FORGET_DELAY)
 	forget.one_shot = true
 	captive.queue_free()
+	emit_signal("release", jumper)
 
 func _forget_traveler():
 	_travelers.erase(_mem.front())
@@ -103,6 +110,7 @@ func _capture_with_end(captive: Jumper):
 		_consume(captive, 1)
 
 func _consume(captive: Jumper, unit_offset: float):
+	emit_signal("capture", captive)
 	var follow := PathFollow2D.new()
 	add_child(follow)
 	var t = RemoteTransform2D.new()
@@ -113,7 +121,7 @@ func _consume(captive: Jumper, unit_offset: float):
 	follow.unit_offset = unit_offset
 	follow.loop = false
 	follow.rotate = false
-	captive.freeze()
+	captive.freeze_kinematics()
 	captive.collision_layer = 0
 
 func _process(delta: float):

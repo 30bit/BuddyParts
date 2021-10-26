@@ -20,7 +20,6 @@ func exec():
 	_is_finished = false
 
 func _physics_process(delta):
-#	print("proc: ", _time_accum, ", ", _period_index, ", ", _is_finished)
 	if _is_finished:
 		return
 	if _period_index >= input_periods.size():

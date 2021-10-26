@@ -45,7 +45,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Buddy Parts"
-run/main_scene="res://level/Level.tscn"
+run/main_scene="res://game/Game.tscn"
 
 [display]
 

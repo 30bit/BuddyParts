@@ -50,24 +50,22 @@ signal bounce
 signal freeze
 signal unfreeze
 
-func freeze():
+func freeze_kinematics():
 	if not _frozen:
 		emit_signal("freeze")
 		_frozen = true
 		forget_state()
 
-func unfreeze():
+func unfreeze_kinematics():
 	if _frozen:
 		emit_signal("unfreeze")
 		_frozen = false
 		forget_state()
 
 func move_and_jump(delta: float, horizontal_input: int, vertical_input: int):
-	scale = Vector2.ONE
-	rotation = 0
 	if _frozen:
 		return
-	_gravitate(delta)
+	gravitate(delta)
 	if is_on_floor():
 		if _airborne:
 			_airborne = false
@@ -75,16 +73,16 @@ func move_and_jump(delta: float, horizontal_input: int, vertical_input: int):
 		_input_horizontal(delta, horizontal_input)
 		
 		if vertical_input == VerticalInput.CHARGE:
-			_charge(delta)
+			charge(delta)
 			if _t_charge == 0:
 				emit_signal("begin_charge")
 		if vertical_input == VerticalInput.JUMP:
-			_jump()
+			jump()
 			velocity.y *= vertical_rush
 			velocity.x *= log(abs(velocity.x / 2)) * horizontal_rush
 			emit_signal("jump")
 	else:
-		_fly(delta)
+		fly(delta)
 		if not _airborne:
 			_airborne = true
 			emit_signal("begin_fly")
@@ -116,7 +114,7 @@ func _input_horizontal(delta: float, horizontal_input: int):
 						emit_signal("begin_brake")
 						_t_move = 0
 						_t_charge = 0
-					_brake(delta)
+					brake(delta)
 
 func forget_state():
 	_t_gravity = 0
@@ -149,24 +147,24 @@ func face_right(delta: float) -> int:
 	_t_move = _next(_t_move, delta, move_period, move_wraps)
 	return face
 
-func _brake(delta: float):
+func brake(delta: float):
 	var acceleration = _map(_t_brake, floor_period, floor_friction)
 	_t_brake = _next(_t_brake, delta, floor_period, floor_wraps)
 	velocity.x = lerp(velocity.x - acceleration, 0, acceleration)
 
-func _fly(delta: float):
+func fly(delta: float):
 	var acceleration = _map(_t_brake, air_period, air_resistance)
 	_t_brake = _next(_t_brake, delta, air_period, air_wraps)
 	velocity.x = lerp(velocity.x, 0, acceleration)
 
-func _charge(delta: float):
+func charge(delta: float):
 	_t_charge = _next(_t_charge, delta, jump_period, jump_wraps)
 
-func _gravitate(delta: float):
+func gravitate(delta: float):
 	velocity.y += _map(_t_gravity, gravity_period, gravity)
 	_t_gravity = _next(_t_gravity, delta, gravity_period, gravity_wraps)
 
-func _jump():
+func jump():
 	velocity.y -= _map(_t_charge, jump_period, jump_speed)
 	_t_gravity = 0
 	_t_move = 0
